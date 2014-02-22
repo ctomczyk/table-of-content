@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <title>Generate TOC</title>
+        <meta charset="utf-8">
+        <meta name="author" content="Roger Johansson">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            body {
+                font-family: 'Segoe UI', 'Segoe UI Web Regular', 'Segoe UI Symbol', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="content">
+            <h1>Generate TOC, h1</h1>
+            <h2>Header, h2</h2>
+            <h3>Header, h3</h3>
+            <h4>Header, h4</h4>
+            <h5>Header, h5</h5>
+            <h6>Header, h6</h6>
+            <h5>Header, h5</h5>
+            <h4>Header, h4</h4>
+            <h5>Header, h5</h5>
+        </div>
+
+        <div role="directory" id="toc"></div>
+
+        <script src="create_toc.js"></script>
+        <script>
+            window.create_toc(document.getElementById('content'), document.getElementById('toc'));
+        </script>
+
+    </body>
+</html>
