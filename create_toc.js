@@ -15,7 +15,6 @@
         get_inner_text;
 
     if (document.createTreeWalker) {
-
         headers_filter = function headers_filter(node) {
             if (isHeader.test(node.nodeName.toLowerCase())) {
                 return NodeFilter.FILTER_ACCEPT;
@@ -24,7 +23,8 @@
         };
 
         get_header_nodes = function get_header_nodes(fromNode) {
-            var tree = document.createTreeWalker(fromNode, NodeFilter.SHOW_ELEMENT, headers_filter, false), resultHeaderNodes = [];
+            var tree = document.createTreeWalker(fromNode, NodeFilter.SHOW_ELEMENT, headers_filter, false),
+                resultHeaderNodes = [];
             while (tree.nextNode()) {
                 resultHeaderNodes.push(tree.currentNode);
             }
@@ -39,7 +39,7 @@
                 len;
 
             if (isHeader.test(fromNode.nodeName.toLowerCase())) {
-                resultHeaderNodes[resultHeaderNodes.length] = fromNode;
+                resultHeaderNodes.push(fromNode);
             } else if (fromNode.childNodes.length > 0) {
                 for (i = 0, len = fromNode.childNodes.length; i < len; i += 1) {
                     resultHeaderNodes = resultHeaderNodes.concat(get_header_nodes(fromNode.childNodes[i]));
