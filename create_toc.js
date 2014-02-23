@@ -7,24 +7,24 @@
 /*global NodeFilter */
 
 (function (global) {
-
     'use strict';
 
     var isHeader = /^[h][1-6]{1}$/,
-        get_header_nodes;
-
-    function headers_filter(node) {
-        if (isHeader.test(node.nodeName.toLowerCase())) {
-            return NodeFilter.FILTER_ACCEPT;
-        }
-        return NodeFilter.FILTER_SKIP;
-    }
+        get_header_nodes,
+        headers_filter,
+        get_inner_text;
 
     if (document.createTreeWalker) {
 
+        headers_filter = function headers_filter(node) {
+            if (isHeader.test(node.nodeName.toLowerCase())) {
+                return NodeFilter.FILTER_ACCEPT;
+            }
+            return NodeFilter.FILTER_SKIP;
+        };
+
         get_header_nodes = function get_header_nodes(fromNode) {
-            var tree = document.createTreeWalker(fromNode, NodeFilter.SHOW_ELEMENT, headers_filter, false),
-                resultHeaderNodes = [];
+            var tree = document.createTreeWalker(fromNode, NodeFilter.SHOW_ELEMENT, headers_filter, false), resultHeaderNodes = [];
             while (tree.nextNode()) {
                 resultHeaderNodes.push(tree.currentNode);
             }
@@ -57,12 +57,34 @@
         return random_str;
     }
 
-    function get_inner_text(elm) {
-        var txt = '';
-        if (elm && elm.childNodes && elm.childNodes.length > 0) {
-            txt = elm.data || elm.textContent || elm.innerText;
-        }
-        return txt;
+    // get_inner_text
+    if (typeof document.getElementsByTagName('html')[0].textContent === 'string') {
+        get_inner_text = function get_inner_text(node) {
+            return node.textContent;
+        };
+    } else if (document.createTreeWalker) {
+        get_inner_text = function get_inner_text(root) {
+            var w = document.createTreeWalker(root, 4, null, false), result = '';
+            while (w.nextNode()) {
+                result += w.currentNode.data;
+            }
+            return result;
+        };
+    } else {
+        get_inner_text = function get_inner_text(node) {
+            var txt = '';
+
+            node = node.firstChild;
+            while (node) {
+                if (node.nodeType === 3 || node.nodeType === 4) {
+                    txt += node.data;
+                } else if (node.nodeType === 1) {
+                    txt += get_inner_text(node);
+                }
+                node = node.nextSibling;
+            }
+            return txt;
+        };
     }
 
     function create_toc(fromNode, insertTo) {
